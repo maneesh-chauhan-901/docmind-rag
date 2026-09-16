@@ -49,43 +49,6 @@ PDF upload
 
 Gemini is instructed to answer only from the retrieved context. When the context does not contain the answer, the application asks it to say that the information was not found in the uploaded documents.
 
-## Installation
-
-Use Python 3.10 or newer.
-
-```bash
-python -m venv .venv
-```
-
-Windows PowerShell:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-```
-
-Copy `.env.example` to `.env` and add your Gemini API key:
-
-```text
-GEMINI_API_KEY=your_real_key_here
-```
-
-Never commit the `.env` file.
-
-## Run
-
-```bash
-streamlit run app.py
-```
-
-The first indexing operation downloads the small `all-MiniLM-L6-v2` embedding model. It runs on the CPU. Embeddings are stored in the local `chroma_db` folder and reused for later questions.
-
-## Example Questions
-
-- What is the main research question?
-- What method did the authors use?
-- What were the main findings?
-- Which limitations are mentioned?
 
 ## Limitations
 
