@@ -1,0 +1,96 @@
+# DocMind
+
+DocMind is a small AI research and document intelligence assistant. Upload one or more PDF research documents, ask questions, and receive answers grounded in the uploaded text with document and page citations.
+
+## Features
+
+- Upload multiple PDFs
+- Extract text page by page
+- Split text into simple overlapping chunks
+- Create CPU-friendly embeddings with `all-MiniLM-L6-v2`
+- Store chunks and metadata in a local ChromaDB index
+- Retrieve relevant chunks for each question
+- Generate answers with the Gemini API
+- Show source document names and page numbers
+- Keep chat history during the current Streamlit session
+- Clear the local document index
+
+## Technology Stack
+
+- Python
+- Streamlit
+- PyMuPDF
+- Sentence Transformers
+- ChromaDB
+- Gemini API
+- python-dotenv
+
+LangChain and other RAG frameworks are intentionally not used. The RAG steps are implemented directly in `rag.py`.
+
+## Architecture
+
+- `app.py`: Streamlit interface, uploads, chat, and source display.
+- `pdf_utils.py`: PDF extraction and simple text chunking.
+- `rag.py`: Embeddings, ChromaDB storage, retrieval, and Gemini generation.
+
+## How RAG Works
+
+```text
+PDF upload
+  -> PyMuPDF page text extraction
+  -> overlapping text chunks
+  -> Sentence Transformer embeddings
+  -> local ChromaDB storage
+  -> question embedding
+  -> top-K similarity retrieval
+  -> Gemini prompt with retrieved context
+  -> answer and source pages
+```
+
+Gemini is instructed to answer only from the retrieved context. When the context does not contain the answer, the application asks it to say that the information was not found in the uploaded documents.
+
+## Installation
+
+Use Python 3.10 or newer.
+
+```bash
+python -m venv .venv
+```
+
+Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+Copy `.env.example` to `.env` and add your Gemini API key:
+
+```text
+GEMINI_API_KEY=your_real_key_here
+```
+
+Never commit the `.env` file.
+
+## Run
+
+```bash
+streamlit run app.py
+```
+
+The first indexing operation downloads the small `all-MiniLM-L6-v2` embedding model. It runs on the CPU. Embeddings are stored in the local `chroma_db` folder and reused for later questions.
+
+## Example Questions
+
+- What is the main research question?
+- What method did the authors use?
+- What were the main findings?
+- Which limitations are mentioned?
+
+## Limitations
+
+- Text-based PDFs work best; scanned PDFs need OCR, which is not included.
+- Retrieval uses simple top-K similarity search only.
+- The local index skips a PDF if another document with the same filename is already indexed.
+- Answers depend on the quality of the extracted text, retrieved chunks, and Gemini response.
+- Chat history lasts only for the current Streamlit session.
